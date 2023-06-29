@@ -11,14 +11,13 @@ from langchain.prompts.chat import (
     HumanMessagePromptTemplate,
 )
 import textwrap
-
+import os
 
 load_dotenv(find_dotenv())
-embeddings = OpenAIEmbeddings()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 
 # url of any video we want to watch
-
-video_url = "https://www.youtube.com/watch?v=rvfn1wMAFgU"
 
 
 def create_db_from_youtube_video_url(video_url):
@@ -70,3 +69,12 @@ def get_response_from_query(db, query, k=4):
     response = chain.run(question=query, docs=docs_page_content)
     response = response.replace("\n", "")
     return response, docs
+
+
+video_url = "https://www.youtube.com/watch?v=rvfn1wMAFgU"
+db = create_db_from_youtube_video_url(video_url)
+
+query = "What is this talk about, and explain to me how i could benefit from it"
+query2 = "Yes, but how do you find the meaning of life, what is he saying you must do? "
+response, docs = get_response_from_query(db, query2)
+print(textwrap.fill(response, width=50))
